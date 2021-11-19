@@ -66,8 +66,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
   // The important thing about how you configure your gyroscope is that rotating the robot counter-clockwise should
   // cause the angle reading to increase until it wraps back over to zero.
-  private final PigeonIMU m_pigeon = null;
-  private final AHRS m_navx = null;
+  private PigeonIMU m_pigeon = null;
+  private AHRS m_navx = null;
 
   // Disable Pigeon and use NAVX IMU by setting CANID to -1
   private final boolean UsePigeonIMU = !(DRIVETRAIN_PIGEON_ID == -1);
