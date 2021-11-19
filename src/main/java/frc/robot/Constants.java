@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -18,33 +20,34 @@ public final class Constants {
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 1.0; // FIXME Measure and set trackwidth
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(19.0);
     /**
      * The front-to-back distance between the drivetrain wheels.
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_WHEELBASE_METERS = 1.0; // FIXME Measure and set wheelbase
+    public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(19.0); 
 
-    public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
+    // Set pigeon ID to -1 to disable and use NAVX on SPI.Port.kMXP
+    public static final int DRIVETRAIN_PIGEON_ID = -1;
+    
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1; 
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 21;
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-142.4);
 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 0; // FIXME Set front left module drive motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 0; // FIXME Set front left module steer motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 0; // FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.0); // FIXME Measure and set front left steer offset
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-65.4);
 
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 0; // FIXME Set front right drive motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 0; // FIXME Set front right steer motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 0; // FIXME Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(0.0); // FIXME Measure and set front right steer offset
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 14; 
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 23; 
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(-28.1);
 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 0; // FIXME Set back left drive motor ID
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 0; // FIXME Set back left steer motor ID
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 0; // FIXME Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.0); // FIXME Measure and set back left steer offset
-
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 0; // FIXME Set back right drive motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 0; // FIXME Set back right steer motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 0; // FIXME Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(0.0); // FIXME Measure and set back right steer offset
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 13; 
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-182.7);
 }
