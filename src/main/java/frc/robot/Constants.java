@@ -29,7 +29,7 @@ public final class Constants {
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(19.0); 
 
     // Set pigeon ID to -1 to disable and use NAVX on SPI.Port.kMXP
-    public static final int DRIVETRAIN_PIGEON_ID = -1;
+    public static final int DRIVETRAIN_PIGEON_ID = 15;
     
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1; 
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
