@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -68,6 +70,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   );
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+
+  private final Field2d m_field = new Field2d();
 
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
   // The important thing about how you configure your gyroscope is that rotating the robot counter-clockwise should
@@ -162,6 +166,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY());
 
+    SmartDashboard.putData("Field", m_field);
   }
 
   /**
@@ -182,7 +187,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   /**
-   * getGyroscopeRotation() - current angle from gyroscope
+   * get current angle from gyroscope, return Rotation2d object.
    * 
    * @return gyro angle in Rotation2d 
    */
@@ -201,6 +206,29 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(pose, getGyroscopeRotation());
+  }
+ 
+  /**
+   * set desired swerve module states
+   * 
+   * @param chassisSpeeds
+   */
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
   }
@@ -222,5 +250,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
 
+    // Update Field
+    m_field.setRobotPose(m_odometry.getPoseMeters());
   }
 }
