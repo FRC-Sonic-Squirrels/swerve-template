@@ -38,7 +38,7 @@ public class DriveWithSetRotationCommand extends CommandBase {
   // TODO: tune PID values. Starting values are from FRC2910 competition bot
   // TOTO: maybe add TrapezoidProfile like in WPILib example:
   //    https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
-  private PIDController rotationController = new PIDController(0.5, 0.0, 0.02);
+  private PIDController rotationController = new PIDController(3.0, 0.0, 0.02);
 
   /**
    * 
@@ -61,7 +61,11 @@ public class DriveWithSetRotationCommand extends CommandBase {
     m_setRotationRadians = rotationRadians;
 
     // TODO: this or .enableContinousInput(-Math.PI, Math.PI); ? maybe needs to match swerve modules
-    rotationController.enableContinuousInput(0.0, 2*Math.PI);
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
+
+    SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
+    SmartDashboard.putNumber("RobotAngle", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("RotationOutput", 0.0);
 
     addRequirements(drivetrainSubsystem);
   }
@@ -83,14 +87,27 @@ public class DriveWithSetRotationCommand extends CommandBase {
     if (pov >= 0.0) {
       // pov of -1 indicates no POV button pressed
 
+      if (pov > 180) {
+        pov = 360 - pov;
+      }
+      else {
+        pov = - pov;
+      }
       // convert POV angle from degrees to Radians
       m_setRotationRadians = Math.toRadians(pov);
+
+      System.out.println("POV=" + pov);
+      SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
 
       // reset the PID controller
       rotationController.reset();
     }
 
     double rotationOutput = rotationController.calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
+
+    SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
+    SmartDashboard.putNumber("RobotAngle", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("RotationOutput", rotationOutput);
 
     m_drivetrainSubsystem.drive(
       ChassisSpeeds.fromFieldRelativeSpeeds(

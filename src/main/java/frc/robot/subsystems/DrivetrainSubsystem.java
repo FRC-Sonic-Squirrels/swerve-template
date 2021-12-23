@@ -164,6 +164,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
 
+    m_odometry.resetPosition(new Pose2d(4.0, 4.0, new Rotation2d(0.0)), getGyroscopeRotation());
+
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY());
@@ -178,6 +180,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void zeroGyroscope() {
     if (UsePigeonIMU) {
         m_pigeon.setFusedHeading(0.0);
+        m_pigeon.setAccumZAngle(0.0);
     }
     else {
         m_navx.zeroYaw();
@@ -225,7 +228,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(pose, getGyroscopeRotation());
   }
- 
+
   /**
    * set desired swerve module states
    * 
