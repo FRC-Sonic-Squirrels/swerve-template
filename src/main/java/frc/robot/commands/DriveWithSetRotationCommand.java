@@ -13,14 +13,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 /**
- * This class implements field centric swerve drive, with fixed rotational control.
- * The robot defaults to zero degree rotation. Pressing the Xbox POV buttons change
- * the target angle.
+ * This class implements field centric swerve drive, with fixed rotational control. The robot
+ * defaults to zero degree rotation. Pressing the Xbox POV buttons change the target angle.
  * 
  * Inspired by Team 1684's comprehensive whitepaper on Swerve.
- * https://www.first1684.com/uploads/2/0/1/6/20161347/chimiswerve_whitepaper__2_.pdf 
- * and Team 2910's 2021 competition robot code
- * https://github.com/FRCTeam2910/2021CompetitionRobot
+ * https://www.first1684.com/uploads/2/0/1/6/20161347/chimiswerve_whitepaper__2_.pdf and Team 2910's
+ * 2021 competition robot code https://github.com/FRCTeam2910/2021CompetitionRobot
  */
 
 public class DriveWithSetRotationCommand extends CommandBase {
@@ -36,7 +34,7 @@ public class DriveWithSetRotationCommand extends CommandBase {
 
   // PID controller to maintain fixed rotation.
   // TODO: maybe add TrapezoidProfile like in WPILib example:
-  //    https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
+  // https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
   private PIDController rotationController = new PIDController(3.0, 0.0, 0.02);
 
   /**
@@ -49,10 +47,8 @@ public class DriveWithSetRotationCommand extends CommandBase {
    * @param rotationRadians
    */
   public DriveWithSetRotationCommand(DrivetrainSubsystem drivetrainSubsystem,
-      DoubleSupplier translationXSupplier,
-      DoubleSupplier translationYSupplier,
-      DoubleSupplier rotationPOVSupplier,
-      double rotationRadians) {
+      DoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier,
+      DoubleSupplier rotationPOVSupplier, double rotationRadians) {
     m_drivetrainSubsystem = drivetrainSubsystem;
     m_translationXSupplier = translationXSupplier;
     m_translationYSupplier = translationYSupplier;
@@ -63,7 +59,8 @@ public class DriveWithSetRotationCommand extends CommandBase {
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
-    SmartDashboard.putNumber("RobotAngle", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("RobotAngle",
+        m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     SmartDashboard.putNumber("RotationOutput", 0.0);
 
     addRequirements(drivetrainSubsystem);
@@ -106,20 +103,17 @@ public class DriveWithSetRotationCommand extends CommandBase {
       }
     }
 
-    double rotationOutput = rotationController.calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
+    double rotationOutput = rotationController
+        .calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
-    SmartDashboard.putNumber("RobotAngle", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("RobotAngle",
+        m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     SmartDashboard.putNumber("RotationOutput", rotationOutput);
 
-    m_drivetrainSubsystem.drive(
-      ChassisSpeeds.fromFieldRelativeSpeeds(
-              m_translationXSupplier.getAsDouble(),
-              m_translationYSupplier.getAsDouble(),
-              rotationOutput,
-              m_drivetrainSubsystem.getGyroscopeRotation()
-      )
-    );
+    m_drivetrainSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+        m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), rotationOutput,
+        m_drivetrainSubsystem.getGyroscopeRotation()));
 
   }
 
