@@ -86,20 +86,24 @@ public class DriveWithSetRotationCommand extends CommandBase {
     if (pov >= 0.0) {
       // pov of -1 indicates no POV button pressed
 
+      // POV increases clockwise, so need to negate. Up is forward (0 deg).
+      // left (counter clockwise) is positive, right (clockwise) is negative
       if (pov > 180) {
+        // example: 270 becomes 90
         pov = 360 - pov;
+      } else {
+        // example: 90 becomes -90
+        pov = -pov;
       }
-      else {
-        pov = - pov;
+
+      if (Math.toRadians(pov) != m_setRotationRadians) {
+        // only reset PDI if target changes
+        SmartDashboard.putNumber("TargetAngle", pov);
+
+        // reset the PID controller
+        m_setRotationRadians = Math.toRadians(pov);
+        rotationController.reset();
       }
-      // convert POV angle from degrees to Radians
-      m_setRotationRadians = Math.toRadians(pov);
-
-      System.out.println("POV=" + pov);
-      SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
-
-      // reset the PID controller
-      rotationController.reset();
     }
 
     double rotationOutput = rotationController.calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
