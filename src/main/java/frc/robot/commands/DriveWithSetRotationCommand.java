@@ -35,8 +35,7 @@ public class DriveWithSetRotationCommand extends CommandBase {
   private double m_setRotationRadians;
 
   // PID controller to maintain fixed rotation.
-  // TODO: tune PID values. Starting values are from FRC2910 competition bot
-  // TOTO: maybe add TrapezoidProfile like in WPILib example:
+  // TODO: maybe add TrapezoidProfile like in WPILib example:
   //    https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
   private PIDController rotationController = new PIDController(3.0, 0.0, 0.02);
 
