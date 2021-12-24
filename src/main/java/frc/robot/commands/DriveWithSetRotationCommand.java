@@ -55,7 +55,6 @@ public class DriveWithSetRotationCommand extends CommandBase {
     m_rotationPOVSupplier = rotationPOVSupplier;
     m_setRotationRadians = rotationRadians;
 
-    // TODO: this or .enableContinousInput(-Math.PI, Math.PI); ? maybe needs to match swerve modules
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
