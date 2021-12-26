@@ -297,7 +297,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         new SwerveModuleState(m_backRightModule.getDriveVelocity(),
             new Rotation2d(m_backRightModule.getSteerAngle())));
 
-    // TODO: how can we be sure m_desitedStates form Autonomous gets set before running this periodic()
+    // TODO: how can we be sure m_desiredStates form Autonomous gets set before running this periodic()
     // and if not, will that mean we get occasional 20ms delays and/or duplicate states?
     setModuleStates(m_desiredStates);
 
