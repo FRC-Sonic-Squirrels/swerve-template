@@ -87,8 +87,9 @@ public class RobotContainer {
     // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/RobotContainer.java
 
     // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    TrajectoryConfig config = new TrajectoryConfig(
+        DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        DrivetrainSubsystem.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
             // Add kinematics to ensure max speed is actually obeyed
             .setKinematics(m_drivetrainSubsystem.kinematics());
 
