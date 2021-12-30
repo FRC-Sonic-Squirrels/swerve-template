@@ -193,6 +193,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   /**
+   * Set the current odometry pose
+   * 
+   * @param pose
+   * @param rotation
+   */
+  public void setPose(Pose2d pose, Rotation2d rotation) {
+    m_odometry.resetPosition(pose, rotation);
+  }
+
+  /**
    * get current angle from gyroscope, return Rotation2d object.
    * 
    * @return gyro angle in Rotation2d
