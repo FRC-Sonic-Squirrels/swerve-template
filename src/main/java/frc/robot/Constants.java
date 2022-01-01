@@ -4,9 +4,10 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.DrivetrainSubsystem;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
