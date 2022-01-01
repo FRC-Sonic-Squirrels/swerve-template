@@ -52,6 +52,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public static final double MAX_VELOCITY_METERS_PER_SECOND =
       6380.0 / 60.0 * SdsModuleConfigurations.MK3_STANDARD.getDriveReduction()
           * SdsModuleConfigurations.MK3_STANDARD.getWheelDiameter() * Math.PI;
+
+  /**
+   * The maximum acceleration of the robot.
+   * 
+   * Setting it to the same as MAX_VELOCITY means we expect to be able to accelerate to max speed in
+   * one second.
+   */
+  public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED =
+      MAX_VELOCITY_METERS_PER_SECOND;
+
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
@@ -62,6 +72,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
       MAX_VELOCITY_METERS_PER_SECOND
           / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+
+  /**
+   * The maximum rotational acceleration of the robot.
+   * 
+   * Setting it to the same as MAX_ANGULAR_VELOCITY means we expect to be able to accelerate to max
+   * rotational speed in one second.
+   */
+  public static final double MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED =
+      MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       // Front left
@@ -190,6 +209,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_odometry.resetPosition(
         new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
         getGyroscopeRotation());
+  }
+
+  /**
+   * Set the current odometry pose
+   * 
+   * @param pose
+   * @param rotation
+   */
+  public void setPose(Pose2d pose, Rotation2d rotation) {
+    m_odometry.resetPosition(pose, rotation);
   }
 
   /**
