@@ -13,3 +13,7 @@ Use the configuration in `config.json` to generate the robot code.
 ## Data
 
 Data file output from characterization should be stored here for future examination.
+
+## Example
+
+![Example Analysis](https://raw.githubusercontent.com/FRC-Sonic-Squirrels/swerve-template/2022Beta/SysId/SysID_analyzer.PNG)
