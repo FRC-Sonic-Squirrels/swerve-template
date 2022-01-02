@@ -16,4 +16,8 @@ Data file output from characterization should be stored here for future examinat
 
 ## Example
 
+![SysId code generation](https://raw.githubusercontent.com/FRC-Sonic-Squirrels/swerve-template/2022Beta/SysId/SysID_generator.PNG)
+
+![SysId Logger](https://raw.githubusercontent.com/FRC-Sonic-Squirrels/swerve-template/2022Beta/SysId/SysID_logger.PNG)
+
 ![Example Analysis](https://raw.githubusercontent.com/FRC-Sonic-Squirrels/swerve-template/2022Beta/SysId/SysID_analyzer.PNG)
