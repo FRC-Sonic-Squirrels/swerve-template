@@ -19,11 +19,12 @@
   "cSpell.words": [
     "CANID",
     "deadband",
+    "drivetrains",
     "navx"
   ],
   "[java]": {
     "editor.tabSize": 2
-  }
+  },
   "java.test.config": [
     {
       "name": "WPIlibUnitTests",
