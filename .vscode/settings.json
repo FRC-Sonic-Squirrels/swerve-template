@@ -17,10 +17,13 @@
     "**/*~": true
   },
   "cSpell.words": [
+    "AHRS",
     "CANID",
     "deadband",
     "drivetrains",
-    "navx"
+    "navx",
+    "odometry",
+    "TRACKWIDTH"
   ],
   "[java]": {
     "editor.tabSize": 2
