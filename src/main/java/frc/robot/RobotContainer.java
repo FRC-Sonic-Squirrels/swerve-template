@@ -115,26 +115,7 @@ public class RobotContainer {
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(1.0, 0, new Rotation2d(0)), config);
 
-    var thetaController = new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0,
-        AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand =
-        new SwerveControllerCommand(exampleTrajectory, 
-            m_drivetrainSubsystem::getPose, // Functional interface to feed supplier
-            m_drivetrainSubsystem.kinematics(),
-            // Position controllers
-            new PIDController(AutoConstants.kPXController, 0, 0),
-            new PIDController(AutoConstants.kPYController, 0, 0),
-            thetaController,
-            m_drivetrainSubsystem::setModuleStates,
-            m_drivetrainSubsystem);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_drivetrainSubsystem.resetOdometry(exampleTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0)));
+    return SwerveTrajectoryFollowCommandFactory.SwerveControllerCommand(exampleTrajectory, m_drivetrainSubsystem, true);
 
   }
 

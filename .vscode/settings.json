@@ -21,6 +21,7 @@
     "CANID",
     "deadband",
     "drivetrains",
+    "Feedforward",
     "navx",
     "odometry",
     "TRACKWIDTH"

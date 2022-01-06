@@ -9,7 +9,8 @@ import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
-
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -115,6 +116,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   private SwerveModuleState[] m_desiredStates;
 
+  private SimpleMotorFeedforward m_feedForward = new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
+
   /**
    * Object constructor
    */
@@ -181,7 +184,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
 
-    // TODO: set starting point on the field
+    // TODO: set starting point on the field accurately
     m_odometry.resetPosition(new Pose2d(4.0, 4.0, new Rotation2d(0.0)), getGyroscopeRotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
@@ -283,7 +286,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * @return volts
    */
   private double velocityToDriveVolts(double speedMetersPerSecond) {
-    return speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
+    double ff = m_feedForward.calculate(speedMetersPerSecond);
+    return MathUtil.clamp(ff, -MAX_VOLTAGE, MAX_VOLTAGE);
+
+    // below is a naive guess for output volts, linear map of desired velocity to volts
+    // return speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
   }
 
   /**
