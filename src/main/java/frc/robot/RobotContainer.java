@@ -7,6 +7,8 @@ package frc.robot;
 import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,21 +29,27 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final XboxController m_controller = new XboxController(0);
+
+  SendableChooser<Command> chooser = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true);
+    SmartDashboard.putData("Auto mode", chooser);
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
+    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            drivetrainSubsystem,
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
@@ -61,11 +69,11 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+            .whenPressed(drivetrainSubsystem::zeroGyroscope);
 
     new Button(m_controller::getAButton)
             .whenPressed(new DriveWithSetRotationCommand(
-              m_drivetrainSubsystem,
+              drivetrainSubsystem,
               () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
               () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
               () -> m_controller.getPOV(),
@@ -75,6 +83,8 @@ public class RobotContainer {
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
+   * DEPRICATED. Get directly from chooser.
+   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
@@ -86,10 +96,10 @@ public class RobotContainer {
         DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
         DrivetrainSubsystem.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(m_drivetrainSubsystem.kinematics());
+            .setKinematics(drivetrainSubsystem.kinematics());
 
-    m_drivetrainSubsystem.setPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-        m_drivetrainSubsystem.getGyroscopeRotation());
+    drivetrainSubsystem.setPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+        drivetrainSubsystem.getGyroscopeRotation());
 
 
     // An example trajectory to follow. All units in meters.
@@ -109,7 +119,7 @@ public class RobotContainer {
         // End 1 meter straight ahead of where we started, facing forward
         new Pose2d(1.0, 0, new Rotation2d(0)), config);
 
-    return SwerveTrajectoryFollowCommandFactory.SwerveControllerCommand(exampleTrajectory, m_drivetrainSubsystem, true);
+    return SwerveTrajectoryFollowCommandFactory.SwerveControllerCommand(exampleTrajectory, drivetrainSubsystem, true);
 
   }
 
