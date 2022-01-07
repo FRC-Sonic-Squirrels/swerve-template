@@ -67,13 +67,33 @@ public class TestTrajectories {
    * @param distanceInMeters
    * @return trajectory
    */
-  public Trajectory straightForward(double distanceInMeters) {
+  public Trajectory straightSideways(double distanceInMeters) {
 
     // setReversed(true) if we are traveling backwards
 
     return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
         List.of(), new Pose2d(distanceInMeters, 0.0, new Rotation2d(0)),
         getTrajectoryConfig().setReversed(distanceInMeters < 0.0));
+
+  }
+
+  /**
+   * Sideways trajectory
+   * 
+   * Return a trajectory that drives sideways for a given distance in meters.
+   * 
+   * This will only work for holonomic drivetrains, like swerve.
+   * 
+   * @param distanceInMeters
+   * @return trajectory
+   */
+  public Trajectory straightForward(double distanceInMeters) {
+
+    // TODO: will this even work? Need to test
+
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
+        List.of(), new Pose2d(0.0, distanceInMeters, new Rotation2d(0)),
+        getTrajectoryConfig());
 
   }
 
@@ -85,7 +105,7 @@ public class TestTrajectories {
    * @param leftInMeters
    * @return trajectory
    */
-  public Trajectory calibrationCurve(double forwardInMeters, double leftInMeters) {
+  public Trajectory simpleCurve(double forwardInMeters, double leftInMeters) {
 
     double rotation = Math.PI / 2;
 
