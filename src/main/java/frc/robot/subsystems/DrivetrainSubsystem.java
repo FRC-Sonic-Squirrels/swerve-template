@@ -259,7 +259,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     if (desiredStates != null) {
-      SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
+      SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND); 
 
       m_frontLeftModule.set(velocityToDriveVolts(
           desiredStates[0].speedMetersPerSecond),
