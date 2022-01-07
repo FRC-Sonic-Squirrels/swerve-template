@@ -185,7 +185,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
 
     // TODO: set starting point on the field accurately
-    m_odometry.resetPosition(new Pose2d(4.0, 4.0, new Rotation2d(0.0)), getGyroscopeRotation());
+    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getGyroscopeRotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
