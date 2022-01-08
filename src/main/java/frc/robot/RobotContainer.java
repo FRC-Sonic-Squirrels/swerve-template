@@ -48,12 +48,17 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
-    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            drivetrainSubsystem,
-            () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-    ));
+    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    //         drivetrainSubsystem,
+    //         () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    // ));
+
+    drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(drivetrainSubsystem,
+        () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> controller.getPOV(), 0));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -71,13 +76,13 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-    new Button(controller::getAButton)
-            .whenPressed(new DriveWithSetRotationCommand(
-              drivetrainSubsystem,
-              () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-              () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-              () -> controller.getPOV(),
-              0));
+    // new Button(controller::getAButton)
+    //         .whenPressed(new DriveWithSetRotationCommand(
+    //           drivetrainSubsystem,
+    //           () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //           () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //           () -> controller.getPOV(),
+    //           0));
   }
 
   /**
