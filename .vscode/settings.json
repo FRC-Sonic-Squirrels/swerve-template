@@ -25,6 +25,8 @@
     "holonomic",
     "navx",
     "odometry",
+    "teleop",
+    "teleoperated",
     "TRACKWIDTH"
   ],
   "[java]": {
