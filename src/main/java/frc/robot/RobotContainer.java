@@ -29,11 +29,11 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
+  public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 
-  private final XboxController m_controller = new XboxController(0);
+  private final XboxController controller = new XboxController(0);
 
-  SendableChooser<Command> chooser = new SendableChooser<>();
+  public final SendableChooser<Command> chooser = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -50,9 +50,9 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
     // Configure the button bindings
@@ -67,23 +67,23 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(m_controller::getBackButton)
+    new Button(controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-    new Button(m_controller::getAButton)
+    new Button(controller::getAButton)
             .whenPressed(new DriveWithSetRotationCommand(
               drivetrainSubsystem,
-              () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-              () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-              () -> m_controller.getPOV(),
+              () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+              () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+              () -> controller.getPOV(),
               0));
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * DEPRICATED. Get directly from chooser.
+   * DEPRECATED. Get directly from chooser.
    * 
    * @return the command to run in autonomous
    */

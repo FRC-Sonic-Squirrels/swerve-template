@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -57,6 +59,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
+
+    m_autonomousCommand.beforeStarting(() -> m_robotContainer.drivetrainSubsystem.setPose(
+        new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+        m_robotContainer.drivetrainSubsystem.getGyroscopeRotation()));
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
