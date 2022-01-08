@@ -36,7 +36,9 @@ public class DriveWithSetRotationCommand extends CommandBase {
   // PID controller to maintain fixed rotation.
   // TODO: maybe add TrapezoidProfile like in WPILib example:
   // https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
-  private ProfiledPIDController rotationController = new ProfiledPIDController(3.0, 0.0, 0.0,
+  // trapazoidal seems to kinda work, except PID is occilating
+  // TODO: retune PID
+  private ProfiledPIDController rotationController = new ProfiledPIDController(0.4, 0.0, 0.0,
       new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
           DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED));
 
@@ -59,7 +61,8 @@ public class DriveWithSetRotationCommand extends CommandBase {
     m_setRotationRadians = rotationRadians;
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
-    rotationController.setTolerance(0.1);  // about 3 degrees
+    // TODO: tolerance isn't stopping occilation near target
+    rotationController.setTolerance(0.1);  // about 6 degrees
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
     SmartDashboard.putNumber("RobotAngle",
