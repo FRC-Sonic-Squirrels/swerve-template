@@ -67,7 +67,7 @@ public class TestTrajectories {
    * @param distanceInMeters
    * @return trajectory
    */
-  public Trajectory straightSideways(double distanceInMeters) {
+  public Trajectory straightForwards(double distanceInMeters) {
 
     // setReversed(true) if we are traveling backwards
 
@@ -87,7 +87,7 @@ public class TestTrajectories {
    * @param distanceInMeters
    * @return trajectory
    */
-  public Trajectory straightForward(double distanceInMeters) {
+  public Trajectory straightSideways(double distanceInMeters) {
 
     // TODO: will this even work? Need to test
 
