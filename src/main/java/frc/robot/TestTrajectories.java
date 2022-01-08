@@ -87,13 +87,21 @@ public class TestTrajectories {
    * @param distanceInMeters
    * @return trajectory
    */
+  // TODO: this is a terrible function name. fix this.
   public Trajectory straightSideways(double distanceInMeters) {
 
-    // TODO: will this even work? Need to test
-
-    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
-        List.of(), new Pose2d(0.0, distanceInMeters, new Rotation2d(0)),
-        getTrajectoryConfig());
+    if( isSwerve ) {
+      return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
+          List.of(), new Pose2d(0.0, distanceInMeters, new Rotation2d(0)),
+          getTrajectoryConfig());
+    }
+    else {
+      // instead we return a do nothing trajectory (0,0) -> (0,0)
+      System.out.println("WARNING: non holonomic drive can't drive sideways!");
+      return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
+      List.of(), new Pose2d(0.0, 0.0, new Rotation2d(0)),
+      getTrajectoryConfig());
+    }
 
   }
 
