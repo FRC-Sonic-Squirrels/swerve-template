@@ -31,14 +31,14 @@ public class DriveWithSetRotationCommand extends CommandBase {
   private final DoubleSupplier m_rotationPOVSupplier;
 
   // robot rotation in radians to hold while driving
-  private double m_setRotationRadians;
+  private double m_setRotationRadians = 0.0;
 
   // PID controller to maintain fixed rotation.
   // TODO: maybe add TrapezoidProfile like in WPILib example:
   // https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
   // trapezoidal seems to kinda work, except PID is oscillating
   // TODO: retune PID
-  private ProfiledPIDController rotationController = new ProfiledPIDController(0.4, 0.0, 0.0,
+  private ProfiledPIDController rotationController = new ProfiledPIDController(2.0, 0.0, 0.02,
       new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
           DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED));
 
@@ -61,13 +61,17 @@ public class DriveWithSetRotationCommand extends CommandBase {
     m_setRotationRadians = rotationRadians;
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
-    // TODO: tolerance isn't stopping oscillation near target
-    rotationController.setTolerance(0.1);  // about 6 degrees
+    rotationController.setTolerance(0.1, 0.1);  // about 0.1 radians = 6 degrees, 6 deg/sec
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
     SmartDashboard.putNumber("RobotAngle",
         m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     SmartDashboard.putNumber("RotationOutput", 0.0);
+    SmartDashboard.putNumber("Theta V error", rotationController.getVelocityError());
+    SmartDashboard.putNumber("Theta error", rotationController.getPositionError());
+    SmartDashboard.putBoolean("Theta at Target", rotationController.atGoal());
+    SmartDashboard.putNumber("X", m_translationXSupplier.getAsDouble());
+    SmartDashboard.putNumber("Y", m_translationYSupplier.getAsDouble());
 
     addRequirements(drivetrainSubsystem);
   }
@@ -103,9 +107,8 @@ public class DriveWithSetRotationCommand extends CommandBase {
         // only reset PDI if target changes
         SmartDashboard.putNumber("TargetAngle", pov);
 
-        // reset the PID controller
         m_setRotationRadians = Math.toRadians(pov);
-        rotationController.reset(m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
+        rotationController.setGoal(m_setRotationRadians);
       }
     }
 
@@ -116,6 +119,15 @@ public class DriveWithSetRotationCommand extends CommandBase {
     SmartDashboard.putNumber("RobotAngle",
         m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     SmartDashboard.putNumber("RotationOutput", rotationOutput);
+    SmartDashboard.putNumber("Theta V error", rotationController.getVelocityError());
+    SmartDashboard.putNumber("Theta error", rotationController.getPositionError());
+    SmartDashboard.putBoolean("Theta at Target", rotationController.atGoal());
+    SmartDashboard.putNumber("X", m_translationXSupplier.getAsDouble());
+    SmartDashboard.putNumber("Y", m_translationYSupplier.getAsDouble());
+
+    if (Math.abs(rotationOutput) < 0.07) {
+      rotationOutput = 0.0;
+    }
 
     m_drivetrainSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
         m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), rotationOutput,
