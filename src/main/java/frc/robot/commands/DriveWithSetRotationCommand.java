@@ -34,11 +34,9 @@ public class DriveWithSetRotationCommand extends CommandBase {
   private double m_setRotationRadians = 0.0;
 
   // PID controller to maintain fixed rotation.
-  // TODO: maybe add TrapezoidProfile like in WPILib example:
+  // use a ProfiledPIDController w/ Trapezoidal Profile 
   // https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
-  // trapezoidal seems to kinda work, except PID is oscillating
-  // TODO: retune PID
-  private ProfiledPIDController rotationController = new ProfiledPIDController(2.0, 0.0, 0.0,
+  private ProfiledPIDController rotationController = new ProfiledPIDController(1.5, 0.0, 0.0,
       new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
           DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
 
