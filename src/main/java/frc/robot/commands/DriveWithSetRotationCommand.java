@@ -38,9 +38,9 @@ public class DriveWithSetRotationCommand extends CommandBase {
   // https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
   // trapezoidal seems to kinda work, except PID is oscillating
   // TODO: retune PID
-  private ProfiledPIDController rotationController = new ProfiledPIDController(2.0, 0.0, 0.02,
+  private ProfiledPIDController rotationController = new ProfiledPIDController(2.0, 0.0, 0.0,
       new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-          DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED));
+          DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
 
   /**
    * 
@@ -67,9 +67,9 @@ public class DriveWithSetRotationCommand extends CommandBase {
     SmartDashboard.putNumber("RobotAngle",
         m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     SmartDashboard.putNumber("RotationOutput", 0.0);
-    SmartDashboard.putNumber("Theta V error", rotationController.getVelocityError());
-    SmartDashboard.putNumber("Theta error", rotationController.getPositionError());
-    SmartDashboard.putBoolean("Theta at Target", rotationController.atGoal());
+    SmartDashboard.putNumber("ThetaVError", rotationController.getVelocityError());
+    SmartDashboard.putNumber("ThetaError", rotationController.getPositionError());
+    SmartDashboard.putBoolean("ThetaAtTarget", rotationController.atGoal());
     SmartDashboard.putNumber("X", m_translationXSupplier.getAsDouble());
     SmartDashboard.putNumber("Y", m_translationYSupplier.getAsDouble());
 
@@ -108,7 +108,6 @@ public class DriveWithSetRotationCommand extends CommandBase {
         SmartDashboard.putNumber("TargetAngle", pov);
 
         m_setRotationRadians = Math.toRadians(pov);
-        rotationController.setGoal(m_setRotationRadians);
       }
     }
 
@@ -119,13 +118,13 @@ public class DriveWithSetRotationCommand extends CommandBase {
     SmartDashboard.putNumber("RobotAngle",
         m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     SmartDashboard.putNumber("RotationOutput", rotationOutput);
-    SmartDashboard.putNumber("Theta V error", rotationController.getVelocityError());
-    SmartDashboard.putNumber("Theta error", rotationController.getPositionError());
-    SmartDashboard.putBoolean("Theta at Target", rotationController.atGoal());
+    SmartDashboard.putNumber("ThetaVError", rotationController.getVelocityError());
+    SmartDashboard.putNumber("ThetaError", rotationController.getPositionError());
+    SmartDashboard.putBoolean("ThetaAtTarget", rotationController.atGoal());
     SmartDashboard.putNumber("X", m_translationXSupplier.getAsDouble());
     SmartDashboard.putNumber("Y", m_translationYSupplier.getAsDouble());
 
-    if (Math.abs(rotationOutput) < 0.07) {
+    if (Math.abs(rotationOutput) < 0.05) {
       rotationOutput = 0.0;
     }
 
