@@ -62,8 +62,10 @@ public class DriveWithSetRotationCommand extends CommandBase {
     rotationController.setTolerance(0.1, 0.1);  // about 0.1 radians = 6 degrees, 6 deg/sec
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
-    SmartDashboard.putNumber("RobotAngle",
-        m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("RobotAngleRadians",
+        m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
+    SmartDashboard.putNumber("RobotAngleVelRadians",
+        m_drivetrainSubsystem.getGyroscopeRotationVelocity().getRadians());
     SmartDashboard.putNumber("RotationOutput", 0.0);
     SmartDashboard.putNumber("ThetaVError", rotationController.getVelocityError());
     SmartDashboard.putNumber("ThetaError", rotationController.getPositionError());
@@ -113,8 +115,10 @@ public class DriveWithSetRotationCommand extends CommandBase {
         .calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
-    SmartDashboard.putNumber("RobotAngle",
-        m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("RobotAngleRadians",
+        m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
+    SmartDashboard.putNumber("RobotAngleVelRadians",
+        m_drivetrainSubsystem.getGyroscopeRotationVelocity().getRadians());
     SmartDashboard.putNumber("RotationOutput", rotationOutput);
     SmartDashboard.putNumber("ThetaVError", rotationController.getVelocityError());
     SmartDashboard.putNumber("ThetaError", rotationController.getPositionError());

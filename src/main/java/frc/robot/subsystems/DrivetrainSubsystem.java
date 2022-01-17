@@ -243,6 +243,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
   }
 
+
+  public Rotation2d getGyroscopeRotationVelocity() {
+    if (UsePigeonIMU) {
+      double[] xyz_dps = new double[3];
+      m_pigeon.getRawGyro(xyz_dps);
+      return Rotation2d.fromDegrees(xyz_dps[2]);
+    } else {
+      // TODO: check if this is the right way to do this. Just a guess.
+      // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
+      // the angle increase.
+      return Rotation2d.fromDegrees(360.0 - m_navx.getRate());
+    }
+  }
+
   /**
    * Returns the currently-estimated pose of the robot.
    *
