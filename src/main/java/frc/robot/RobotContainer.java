@@ -96,6 +96,12 @@ public class RobotContainer {
     // Example from WPILib:
     // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/RobotContainer.java
 
+    // set the starting position of the robot on the field
+    // TODO: need a chooser object to select starting position and angle
+    drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
+    drivetrainSubsystem.setPose(Constants.ROBOT_1M_LEFT_OF_HUB,
+        drivetrainSubsystem.getGyroscopeRotation());
+
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
