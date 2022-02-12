@@ -40,22 +40,22 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1; 
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 21;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142.4 + 180);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(176.7);
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(65.4 + 180);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(28.0);
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 14; 
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 24; 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28.1 + 180);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(254.3);
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 13; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(145.9);
 
     public static final class AutoConstants {
         // This kP worked for the DriveWithSetRotation command
