@@ -6,13 +6,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.DrivetrainSubsystem;
 
 import java.util.function.DoubleSupplier;
 
 public class DriveRobotCentricCommand extends CommandBase {
   /** Creates a new RobotCentricDriving. */
-    private final Drivetrain m_drivetrainSubsystem;
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
 
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
@@ -20,7 +20,7 @@ public class DriveRobotCentricCommand extends CommandBase {
 
   
 
-    public DriveRobotCentricCommand(Drivetrain drivetrainSubsystem,
+    public DriveRobotCentricCommand(DrivetrainSubsystem drivetrainSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier) {

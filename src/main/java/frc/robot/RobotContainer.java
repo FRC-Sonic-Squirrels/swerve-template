@@ -34,7 +34,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 
-  private final XboxController controller = new XboxController(0);
+  private final XboxController m_controller = new XboxController(0);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -64,10 +64,12 @@ public class RobotContainer {
     //         () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     // ));
 
-    drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(drivetrainSubsystem,
-        () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> controller.getPOV(), 0));
+    drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(
+      drivetrainSubsystem, 
+      () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
+      () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> m_controller.getPOV(), 
+      0.0));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -81,31 +83,31 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(controller::getBackButton)
+    new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-    // new Button(controller::getAButton)
-    //         .whenPressed(new DriveWithSetRotationCommand(
-    //           drivetrainSubsystem,
-    //           () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //           () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //           () -> controller.getPOV(),
-    //           0));
-    new Button(controller::getXButton)
-            .whenPressed(new DriveHubCentricCommand()
+    new Button(m_controller::getAButton)
+            .whenPressed(new DriveWithSetRotationCommand(
+              drivetrainSubsystem,
+              () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+              () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+              () -> m_controller.getPOV(),
+              0));
+    // new Button(controller::getXButton)
+    //         .whenPressed(new DriveHubCentricCommand()
 
-    new Button(controller::getBButton)
-    .whenPressed(new DriveRobotCentricCommand(drivetrain,
-    () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
-    () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-    () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
+    new Button(m_controller::getBButton)
+    .whenPressed(new DriveRobotCentricCommand(drivetrainSubsystem,
+    () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
+    () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+    () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
 
-    new Button(controller::getAButton)
-        .whenPressed(new DriveFieldCentricCommand(drivetrain,
-        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+    new Button(m_controller::getAButton)
+        .whenPressed(new DriveFieldCentricCommand(drivetrainSubsystem,
+        () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
+        () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
       }
 
   private static double deadband(double value, double deadband) {

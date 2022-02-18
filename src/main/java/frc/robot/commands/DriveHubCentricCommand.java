@@ -32,13 +32,13 @@ public class DriveHubCentricCommand extends CommandBase {
   // copied values from Swerve Template Odometry
   private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
       new TrapezoidProfile.Constraints(
-          Drivetrains.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-          Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
+          DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+          DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
 
 
   private Vector2d m_hubCenter = Constants.HubCentricConstants.HUB_CENTER;
   
-  public DriveHubCentricCommand(Drivetrain drivetrain, Supplier<Double> sidewaysSupplier, Supplier<Double> forwardSupplier) {
+  public DriveHubCentricCommand(DrivetrainSubsystem drivetrain, Supplier<Double> sidewaysSupplier, Supplier<Double> forwardSupplier) {
     m_sidewaysSupplier = sidewaysSupplier;
     m_forwardSupplier = forwardSupplier;
     m_drivetrain = drivetrain;
@@ -71,7 +71,7 @@ public class DriveHubCentricCommand extends CommandBase {
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
     //Multiply by max velocity to hopefully speed up the rotation of the robot 
-    double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
     double strafeX = 0.0;
     double strafeY = 0.0;
@@ -80,13 +80,13 @@ public class DriveHubCentricCommand extends CommandBase {
       // forward/reverse is just orthogonal to tangent
       double orthogonalHeading = targetHeading.getRadians() - (Math.PI / 2.0);
       //Not scaling by radius anymore
-      strafeX += findStrafeX(orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), HubCentricConstants.FORWARD_MULTIPLIER);
-      strafeY += findStrafeY(orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), HubCentricConstants.FORWARD_MULTIPLIER);
+      strafeX += findStrafeX(orthogonalHeading, DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), HubCentricConstants.FORWARD_MULTIPLIER);
+      strafeY += findStrafeY(orthogonalHeading, DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), HubCentricConstants.FORWARD_MULTIPLIER);
     }
     if(m_sidewaysSupplier.get() != 0.0) {
        //Not scaling by radius anymore
-      strafeX += findStrafeX(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLIER);
-      strafeY += findStrafeY(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLIER);
+      strafeX += findStrafeX(targetHeading.getRadians(), DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLIER);
+      strafeY += findStrafeY(targetHeading.getRadians(), DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLIER);
     }
     
     //TODO: might have to adjust rotationCorrection check since we are now multiplying by max angular speed 
