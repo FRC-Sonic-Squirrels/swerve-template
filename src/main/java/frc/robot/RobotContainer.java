@@ -87,7 +87,7 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-    new Button(m_controller::getAButton)
+    new Button(m_controller::getYButton)
             .whenPressed(new DriveWithSetRotationCommand(
               drivetrainSubsystem,
               () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
