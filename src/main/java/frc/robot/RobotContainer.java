@@ -18,6 +18,9 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveFieldCentricCommand;
+import frc.robot.commands.DriveHubCentricCommand;
+import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -89,7 +92,21 @@ public class RobotContainer {
     //           () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
     //           () -> controller.getPOV(),
     //           0));
-  }
+    new Button(controller::getXButton)
+            .whenPressed(new DriveHubCentricCommand()
+
+    new Button(controller::getBButton)
+    .whenPressed(new DriveRobotCentricCommand(drivetrain,
+    () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
+    () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+    () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
+
+    new Button(controller::getAButton)
+        .whenPressed(new DriveFieldCentricCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+      }
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
