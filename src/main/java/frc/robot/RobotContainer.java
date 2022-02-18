@@ -94,8 +94,11 @@ public class RobotContainer {
               () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
               () -> m_controller.getPOV(),
               0));
-    // new Button(controller::getXButton)
-    //         .whenPressed(new DriveHubCentricCommand()
+    new Button(m_controller::getXButton)
+            .whenPressed(new DriveHubCentricCommand(drivetrainSubsystem, 
+            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
+            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND
+            ));
 
     new Button(m_controller::getBButton)
     .whenPressed(new DriveRobotCentricCommand(drivetrainSubsystem,
