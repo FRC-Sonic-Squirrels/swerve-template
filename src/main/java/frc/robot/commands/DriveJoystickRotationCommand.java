@@ -48,20 +48,23 @@ public class DriveJoystickRotationCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // initialize the x and y position of the joystick
-    stickX = deadband( m_xSupplier.get(), 0.5 );
-    stickY = deadband( m_ySupplier.get(), 0.5 );
-
-    // find the angle using these x and y positions
-    angle = Math.acos( stickX / stickY );
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    // initialize the x and y position of the joystick
+    stickX = deadband( m_xSupplier.get(), 0.5 );
+    stickY = deadband( m_ySupplier.get(), 0.5 );
+
+    // find the angle using these x and y positions
+    angle = Math.atan2(stickY, stickX);
+
+    double radsPerSecond = rotationController.calculate(m_drivetrain.getGyroscopeRotation().getRadians(), angle);
+
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(m_leftXSupplier.get(), m_leftYSupplier.get(),
-      rotationController.calculate(m_drivetrain.getGyroscopeRotation().getRadians(), angle),
-      m_drivetrain.getGyroscopeRotation()));
+      radsPerSecond, m_drivetrain.getGyroscopeRotation()));
   }
 
   // Called once the command ends or is interrupted.
@@ -74,8 +77,8 @@ public class DriveJoystickRotationCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // the command finishes once the robot is at the desired rotation
-    return ( (m_drivetrain.getGyroscopeRotation().getRadians() == angle) );
+
+    return false;
   }
 
   // the deadband prevents drivers from accidentally rotating the robot
