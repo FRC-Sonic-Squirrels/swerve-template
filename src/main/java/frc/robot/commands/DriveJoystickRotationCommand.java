@@ -35,20 +35,20 @@ public class DriveJoystickRotationCommand extends CommandBase {
   /** Creates a new DriveJoystickRotationCommand. */
   public DriveJoystickRotationCommand(DrivetrainSubsystem drivetrain, Supplier<Double> xSupplier, Supplier<Double> ySupplier,
       Supplier<Double> leftXSupplier, Supplier<Double> leftYSupplier) {
-    // Use addRequirements() here to declare subsystem dependencies.
+    
     m_drivetrain = drivetrain;
     m_xSupplier = xSupplier;
     m_ySupplier = ySupplier;
     m_leftXSupplier = leftXSupplier;
     m_leftYSupplier = leftYSupplier;
-
+    
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -70,6 +70,7 @@ public class DriveJoystickRotationCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(m_leftXSupplier.get(), m_leftYSupplier.get(),
     0, m_drivetrain.getGyroscopeRotation()));
   }
@@ -77,9 +78,9 @@ public class DriveJoystickRotationCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
     return false;
   }
+
 
   // the deadband prevents drivers from accidentally rotating the robot
   private static double deadband(double value, double deadband) {
