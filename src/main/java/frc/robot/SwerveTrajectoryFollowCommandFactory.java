@@ -42,6 +42,10 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 public class SwerveTrajectoryFollowCommandFactory {
 
+  // placeholder constants for matching up the time it takes to pick up/launch cargo
+  private static double fastTime = 1;
+  private static double slowTime = 2;
+  
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
    * stop at the end of the command.
@@ -184,6 +188,7 @@ public class SwerveTrajectoryFollowCommandFactory {
       //   //SwerveControllerCommand(TrajectoryToShootPos, drivetrain, true)
       // ),
       // new ShootOneCargoCommand(cargo, shooter, intake),
+      new WaitCommand(slowTime), // FIXME: these wait commands take place of what would be collecting/shooting cargo
       new WaitCommand(0.1),
       SwerveControllerCommand(trajectoryToOutOfTarmac, drivetrain, true)
     );
@@ -219,6 +224,7 @@ public class SwerveTrajectoryFollowCommandFactory {
         // new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
         // new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_activated)),
         // new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
+        new WaitCommand(slowTime),
         SwerveControllerCommand(startToShoot, drivetrain, true)
       ),
       
@@ -228,13 +234,15 @@ public class SwerveTrajectoryFollowCommandFactory {
       // 3. slow down flywheel, deploy the intake, then move in front of the next cargo
       new ParallelCommandGroup(
       //  new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_idle)),
+        new WaitCommand(fastTime),
         SwerveControllerCommand(testTrajectories.driveToPose(drivetrain.getPose(), midPos), drivetrain, true)//,
       //  new IntakeDeployCommand(intake, cargo),
       //  new WaitUntilCommand(() -> intake.intakeAtDesiredRPM())
       ),
       
       // 4. collect the cargo, then wait until it is fully in the lower belts
-      SwerveControllerCommand(testTrajectories.driveToPose(midPos, cargoPos), drivetrain, true)//,
+      SwerveControllerCommand(testTrajectories.driveToPose(midPos, cargoPos), drivetrain, true),
+      new WaitCommand(fastTime),
       //new WaitUntilCommand(() -> cargo.cargoInLowerBelts()),
 
       // 5. retract and deactivate the intake
@@ -242,6 +250,7 @@ public class SwerveTrajectoryFollowCommandFactory {
       //   new InstantCommand(() -> intake.retractIntake()),
       //   new InstantCommand(() -> intake.stop())
       // )
+      new WaitCommand(fastTime)
     );
 
   }
@@ -277,20 +286,23 @@ public class SwerveTrajectoryFollowCommandFactory {
         // the upper belts
         new ParallelCommandGroup(
             // new CargoMoveToUpperBeltsCommand(cargo),
-            SwerveControllerCommand(startToMid, drivetrain, true)//,
+            SwerveControllerCommand(startToMid, drivetrain, true),
             // new IntakeDeployCommand(intake, cargo),
             // new WaitUntilCommand(() -> intake.intakeAtDesiredRPM()),
             // new WaitUntilCommand(() -> !cargo.cargoInLowerBelts())
+            new WaitCommand(slowTime)
         ),
 
         // 2. collect the cargo, then wait until it is fully in the lower belts
         SwerveControllerCommand(midToTarget, drivetrain, true),
         // new WaitUntilCommand(() -> cargo.cargoInLowerBelts()),
+        new WaitCommand(fastTime),
 
         // 3. retract and deactivate the intake
         new ParallelCommandGroup(
             // new InstantCommand(() -> intake.retractIntake()),
             // new InstantCommand(() -> intake.stop())
+            new WaitCommand(fastTime)
         )
     );
 
@@ -361,16 +373,19 @@ public class SwerveTrajectoryFollowCommandFactory {
       new ParallelCommandGroup(
         // new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_activated)),
         // new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
+        new WaitCommand(fastTime),
         SwerveControllerCommand(initCargoPos_to_shootPos, drivetrain, true)
       ),
       
       // 2. shoot both cargo
       // new ShootCargoCommand(cargo, shooter, intake, robot),
+      new WaitCommand(fastTime),
       
       // 3. slow down flywheel, deploy the intake, then move in front of the first cargo
       new ParallelCommandGroup(
         // new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_idle)),
-        SwerveControllerCommand(shootPos_to_midPos1, drivetrain, true)//,
+        SwerveControllerCommand(shootPos_to_midPos1, drivetrain, true),
+        new WaitCommand(slowTime)
         // new IntakeDeployCommand(intake, cargo),
         // new WaitUntilCommand(() -> intake.intakeAtDesiredRPM())
       ),
@@ -378,19 +393,22 @@ public class SwerveTrajectoryFollowCommandFactory {
       // 4. collect the first cargo, then wait until it is fully in the upper belts
       SwerveControllerCommand(midPos1_to_cargoPos1, drivetrain, true),
       // new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
+      new WaitCommand(fastTime),
       
       // 5. move from where the first cargo was, to the second mid position
       SwerveControllerCommand(cargoPos1_to_midPos2, drivetrain, true),
 
       // 6. collect the second cargo, then wait until it is fully in the lower belts
-      SwerveControllerCommand(midPos2_to_cargoPos2, drivetrain, true)//,
+      SwerveControllerCommand(midPos2_to_cargoPos2, drivetrain, true),
       // new WaitUntilCommand(() -> cargo.cargoInLowerBelts()),
+      new WaitCommand(fastTime),
       
       // 7. retract and deactivate the intake
       // new ParallelCommandGroup(
       //   new InstantCommand(() -> intake.retractIntake()),
       //   new InstantCommand(() -> intake.stop())
       // )
+      new WaitCommand(fastTime)
     );
   }
 
