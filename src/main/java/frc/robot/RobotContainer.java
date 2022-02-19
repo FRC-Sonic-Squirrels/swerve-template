@@ -38,18 +38,21 @@ public class RobotContainer {
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
 
+  public Robot m_robot;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(Robot robot) {
 
+    m_robot = robot;
     // set the starting position of the robot on the field
     // TODO: need a chooser object to select starting position and angle
     drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
     drivetrainSubsystem.setPose(Constants.ROBOT_1M_LEFT_OF_HUB,
         drivetrainSubsystem.getGyroscopeRotation());
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true);
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true, m_robot);
     SmartDashboard.putData("Auto mode", chooser);
 
     // Set up the default command for the drivetrain.

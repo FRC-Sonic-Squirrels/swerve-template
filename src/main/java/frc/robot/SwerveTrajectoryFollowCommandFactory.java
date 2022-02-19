@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -43,8 +44,10 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class SwerveTrajectoryFollowCommandFactory {
 
   // placeholder constants for matching up the time it takes to pick up/launch cargo
-  private static double fastTime = 1;
-  private static double slowTime = 2;
+  private static double fastTime = 1.0;
+  private static double slowTime = 2.0;
+
+  private static String m_state = "";
   
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
@@ -141,7 +144,7 @@ public class SwerveTrajectoryFollowCommandFactory {
    * @param chooser
    */
   public static void addTestTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity,
-      double maxAcceleration, DrivetrainSubsystem drivetrain, boolean isSwerve) {
+      double maxAcceleration, DrivetrainSubsystem drivetrain, boolean isSwerve, Robot robot) {
 
     TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
 
@@ -155,6 +158,15 @@ public class SwerveTrajectoryFollowCommandFactory {
       chooser.addOption("Go Sideways 1m", sidewaysLeft1mCommand(tt, drivetrain));
     }
     chooser.setDefaultOption("Do Nothing", doNothingCommand(drivetrain));
+
+    //TODO: get actual values for these coordinates, these are terrible placeholders
+    chooser.addOption("Autonomous Command Set", doubleShootAndMoveToCargoCommand(
+        new Pose2d(10, 10, new Rotation2d()), new Pose2d(12, 10, new Rotation2d()), //initCargoPos, initMidPos
+        new Pose2d(50, 50, new Rotation2d()), // shootPos
+        new Pose2d(20, 20, new Rotation2d()), new Pose2d(22, 10, new Rotation2d()), // cargoPos1, midPos1
+        new Pose2d(25, 25, new Rotation2d()), new Pose2d(27, 25, new Rotation2d()), // cargoPos2, midPos2
+        tt, drivetrain, robot)
+    );
   }
 
   public static Command getOutOfTarmacAutonomousCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain) {
@@ -188,12 +200,14 @@ public class SwerveTrajectoryFollowCommandFactory {
       //   //SwerveControllerCommand(TrajectoryToShootPos, drivetrain, true)
       // ),
       // new ShootOneCargoCommand(cargo, shooter, intake),
+      new InstantCommand(() -> setAutoRobotState("shoot")),
       new WaitCommand(slowTime), // FIXME: these wait commands take place of what would be collecting/shooting cargo
       new WaitCommand(0.1),
       SwerveControllerCommand(trajectoryToOutOfTarmac, drivetrain, true)
-    );
+    ).alongWith(new InstantCommand(() -> updateStateCommand()).perpetually());
   }
 
+  
 
   /**
    * command for autonomously shooting and then moving to the next set of cargo coordinates.
@@ -221,6 +235,7 @@ public class SwerveTrajectoryFollowCommandFactory {
       // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
       new ParallelCommandGroup(
         // new CargoMoveToUpperBeltsCommand(cargo),
+        
         // new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
         // new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_activated)),
         // new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
@@ -254,6 +269,8 @@ public class SwerveTrajectoryFollowCommandFactory {
     );
 
   }
+
+
 
   // simpler command that moves the robot from its current position to another set of coordinates
   public static Command moveToPoseCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain,
@@ -314,15 +331,15 @@ public class SwerveTrajectoryFollowCommandFactory {
    * (i apologize for this method having 13 parameters)
    * @param initCargoPos the position of the pre-shoot cargo (inches)
    * @param initMidPos the position before collecting the pre-shoot cargo (inches)
+   * @param shootPos the position right in front of the wanted cargo (in inches)
    * @param cargoPos1 the position of the wanted cargo (in inches)
    * @param midPos1 the position of the robot when about to shoot cargo (in inches)
-   * @param shootPos the position right in front of the wanted cargo (in inches)
    * @param cargoPos2 the position of the second wanted cargo (inches)
    * @param midPos2 the position right in front of second wanted cargo (inches)
    * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
-  public static Command doubleShootAndMoveToCargoCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d cargoPos1, Pose2d midPos1,
-      Pose2d shootPos, Pose2d cargoPos2, Pose2d midPos2, TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain,
+  public static Command doubleShootAndMoveToCargoCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d shootPos, Pose2d cargoPos1, Pose2d midPos1,
+      Pose2d cargoPos2, Pose2d midPos2, TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain,
       /*ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake,*/ Robot robot) {
 
     // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
@@ -487,5 +504,14 @@ public class SwerveTrajectoryFollowCommandFactory {
     return new Rotation2d( Math.acos(dotProduct/magnitude) );
   }
 
-  
+
+  // sets the state of the auto robot
+  public static void setAutoRobotState(String state) {
+    m_state = state;
+  }
+
+  private static void updateStateCommand(){
+    SmartDashboard.putString("Auto Climb State", m_state);
+  }
+
 }
