@@ -169,8 +169,10 @@ public class SwerveTrajectoryFollowCommandFactory {
         tt, drivetrain, robot)
     );
 
+    
+
     chooser.addOption("",shootAndMoveToCargoCommand(
-      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3, Rotation2d(0)), 
+      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3, Rotation2d.fromDegrees(270)), 
       new Pose2d(297.6*12, 7.2*12, new Rotation2d()), 
       new Pose2d(50, 50, new Rotation2d()), 
       tt, 
