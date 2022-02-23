@@ -171,11 +171,12 @@ public class SwerveTrajectoryFollowCommandFactory {
 
     
 
-    chooser.addOption("Move to Blue Cargo 3" , shootAndMoveToCargoCommand(
-      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3, Rotation2d.fromDegrees(270)),
-      //TODO: find better positions 
-      new Pose2d(27*12, 9*12, Rotation2d.fromDegrees(20)),
-      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3.getX(),Constants.FieldConstants.BLUE_CARGO_3.getY() + 24, new Rotation2d()), 
+
+    chooser.addOption("Move to Blue Cargo 3",shootAndMoveToCargoCommand(
+      //TODO: add better positions
+      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3, Rotation2d.fromDegrees(270)), 
+      new Pose2d(27*12, 9*12, Rotation2d.fromDegrees(20)), 
+      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3.getX(), Constants.FieldConstants.BLUE_CARGO_3.getY()+24, Rotation2d.fromDegrees(270)), 
       tt, 
       drivetrain));
   }
