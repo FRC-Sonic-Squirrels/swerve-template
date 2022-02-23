@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -169,7 +170,7 @@ public class SwerveTrajectoryFollowCommandFactory {
     );
 
     chooser.addOption("",shootAndMoveToCargoCommand(
-      cargoPos, 
+      new Pose2d(Constants.FieldConstants.BLUE_CARGO_3, Rotation2d(0)), 
       new Pose2d(297.6*12, 7.2*12, new Rotation2d()), 
       new Pose2d(50, 50, new Rotation2d()), 
       tt, 
