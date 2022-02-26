@@ -87,6 +87,7 @@ public final class Constants {
 
     public static class HubCentricConstants{
         public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
+        public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
         public static final double FORWARD_MULTIPLIER = 0.5;
         public static final double SIDEWAYS_MULTIPLIER = 0.3;          
    }

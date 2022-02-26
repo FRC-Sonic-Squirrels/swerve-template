@@ -50,11 +50,11 @@ public class DriveHubCentricCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    //TODO: do we need continous input? drive with set rotation doesnt have it
+    //TODO: do we need continuous input? drive with set rotation doesn't have it
     rotationalController.enableContinuousInput(-Math.PI, Math.PI);
     rotationalController.setTolerance(Math.PI/180); //1 degree of wiggle room
 
-    //TODO: what does this do? drive with set rotation has this 
+    
     rotationalController.reset(m_drivetrain.getGyroscopeRotation().getRadians());
   }
 
@@ -103,17 +103,18 @@ public class DriveHubCentricCommand extends CommandBase {
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(strafeX, strafeY, rotationCorrection, currentHeading));
 
     //TODO: check if need to flip order of coordinates from x,y to y,x
-    SmartDashboard.putNumber("currentHeading", currentHeading.getDegrees());
-    SmartDashboard.putNumber("targetHeading", targetHeading.getDegrees());
-    SmartDashboard.putNumberArray("robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
-    
-    SmartDashboard.putNumber("rotationCorrection", rotationCorrection);
-    SmartDashboard.putNumberArray("strafe values", new double[] {strafeX, strafeY});
+    SmartDashboard.putNumber("Hub_Centric currentHeading", currentHeading.getDegrees());
+    SmartDashboard.putNumber("Hub_Centric targetHeading", targetHeading.getDegrees());
+    SmartDashboard.putNumberArray("Hub_Centric robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
+    SmartDashboard.putNumberArray("Hub_Centric hubPosition", new double[] {Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX(), Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY()});
 
-    SmartDashboard.putNumber("sidewaysInput", m_sidewaysSupplier.get());
-    SmartDashboard.putNumber("forwardInput", m_forwardSupplier.get());
+    SmartDashboard.putNumber("Hub_Centric rotationCorrection", rotationCorrection);
+    SmartDashboard.putNumberArray("Hub_Centric strafe values", new double[] {strafeX, strafeY});
 
-    SmartDashboard.putNumber("radius", radius);
+    SmartDashboard.putNumber("Hub_Centric sidewaysInput", m_sidewaysSupplier.get());
+    SmartDashboard.putNumber("Hub_Centric forwardInput", m_forwardSupplier.get());
+
+    SmartDashboard.putNumber("Hub_Centric radius", radius);
   }
 
   // Called once the command ends or is interrupted.
