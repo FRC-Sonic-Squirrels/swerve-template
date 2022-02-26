@@ -22,7 +22,10 @@ import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
+import frc.robot.commands.VisionDriveToCargo;
+import frc.robot.commands.VisionRotateToCargo;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,6 +36,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
+  public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
 
   private final XboxController m_controller = new XboxController(0);
 
@@ -115,7 +119,15 @@ public class RobotContainer {
         () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
         () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
         () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
-      }
+      
+
+    new Button(m_controller::getLeftBumper)
+      .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrainSubsystem));
+
+    new Button(m_controller::getRightBumper)
+      .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrainSubsystem));
+
+  }
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
