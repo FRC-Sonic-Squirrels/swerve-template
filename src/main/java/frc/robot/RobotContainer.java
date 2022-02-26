@@ -48,9 +48,10 @@ public class RobotContainer {
     m_robot = robot;
     // set the starting position of the robot on the field
     // TODO: need a chooser object to select starting position and angle
-    drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
-    drivetrainSubsystem.setPose(Constants.ROBOT_1M_LEFT_OF_HUB,
-        drivetrainSubsystem.getGyroscopeRotation());
+    //DONE in robotInit 
+    // drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
+    // drivetrainSubsystem.setPose(Constants.ROBOT_1M_LEFT_OF_HUB,
+    //     drivetrainSubsystem.getGyroscopeRotation());
 
     SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true, m_robot);
     SmartDashboard.putData("Auto mode", chooser);
