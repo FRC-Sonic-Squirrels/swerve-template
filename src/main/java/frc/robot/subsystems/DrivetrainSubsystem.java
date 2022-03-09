@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import static frc.robot.Constants.*;
+import java.sql.Driver;
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -180,12 +181,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putData("Field", m_field);
   }
 
+  
+
   /**
    * Sets the gyroscope angle to zero. This can be used to set the direction the robot is currently
    * facing to the 'forwards' direction.
    */
   public void zeroGyroscope() {
-    setGyroscopeHeadingDegrees(0.0);
+    //setGyroscopeHeadingDegrees(0.0);
 
     m_odometry.resetPosition(
         new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
@@ -195,6 +198,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void setGyroscopeHeadingDegrees(double deg) {
     m_pigeon.setFusedHeading(deg);
     m_pigeon.setAccumZAngle(deg);
+    m_pigeon.setYaw(deg,20);
   }
 
   public void setGyroscopeHeadingRadians(double rad) {
@@ -331,5 +335,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Drivetrain IMU compass heading", m_pigeon.getCompassHeading());
     SmartDashboard.putNumber("Drivetrain IMU Fused Heading", m_pigeon.getFusedHeading());
     SmartDashboard.putNumber("Drivetrain IMU absolute compass heading", m_pigeon.getAbsoluteCompassHeading());
+
+    SmartDashboard.putNumber("Drivetrain Odometry rotation", m_odometry.getPoseMeters().getRotation().getDegrees());
   }
 }

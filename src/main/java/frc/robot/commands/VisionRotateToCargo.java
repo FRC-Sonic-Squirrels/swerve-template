@@ -55,21 +55,20 @@ public class VisionRotateToCargo extends CommandBase {
     if(m_result.hasTargets()){
       m_target = m_result.getBestTarget();
       //negate because of how robot rotates 
-      m_targetYaw = -Math.toRadians(m_target.getYaw());
-      
-      m_rotationCorrection = rotateController.calculate(0, m_targetYaw) 
-      * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-      //slow down rotation for testing/safety 
-      m_rotationCorrection *= 0.3;
+      m_targetYaw = -Math.toRadians(m_drivetrain.getGyroscopeRotation().getDegrees() - m_target.getYaw());
     }
-    else {
-      // stop rotating if we lose the target
-      m_rotationCorrection = 0.0;
-    }
+
+    m_rotationCorrection = rotateController.calculate(m_drivetrain.getGyroscopeRotation().getRadians(), m_targetYaw) 
+    * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+     //slow down rotation for testing/safety 
+     m_rotationCorrection *= 0.3;
+
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
       0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
 
     SmartDashboard.putNumber("rotation correction", m_rotationCorrection);
+    SmartDashboard.putNumber("TargetYaw ", m_targetYaw);
   }
 
   // Called once the command ends or is interrupted.

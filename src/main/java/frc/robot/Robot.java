@@ -7,8 +7,10 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.StartPoseConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,8 +32,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
-    m_robotContainer.drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
-    m_robotContainer.drivetrainSubsystem.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, new Rotation2d());
+    //m_robotContainer.drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
   }
 
   /**
@@ -62,9 +63,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
 
-    m_autonomousCommand.beforeStarting(() -> m_robotContainer.drivetrainSubsystem.setPose(
-        new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-        m_robotContainer.drivetrainSubsystem.getGyroscopeRotation()));
+    // m_autonomousCommand.beforeStarting(() -> m_robotContainer.drivetrainSubsystem.setPose(
+    //     new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+    //     m_robotContainer.drivetrainSubsystem.getGyroscopeRotation()));
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -82,6 +83,11 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    // SmartDashboard.putNumber("Yaw Before Zero", m_robotContainer.drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    // m_robotContainer.drivetrainSubsystem.zeroGyroscope();
+    // SmartDashboard.putNumber("Yaw After Zero", m_robotContainer.drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    m_robotContainer.drivetrainSubsystem.setPose(StartPoseConstants.BLUE_MID_TOP, m_robotContainer.drivetrainSubsystem.getGyroscopeRotation());
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
