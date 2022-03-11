@@ -115,6 +115,14 @@ public class SwerveTrajectoryFollowCommandFactory {
     return SwerveControllerCommand(testTrajectories.simpleCurve(1.0, 1.0).transformBy(new Transform2d(new Pose2d(), drivetrain.getPose())), drivetrain, true);
   }
 
+  public static Command driveToPose(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain){
+    
+    drivetrain.setPose(Constants.StartPoseConstants.BLUE_MID_TOP, drivetrain.getGyroscopeRotation());
+    Pose2d endPose = new Pose2d(Constants.StartPoseConstants.BLUE_MID_TOP.getX()+3.0, Constants.StartPoseConstants.BLUE_MID_TOP.getY()+3.0, drivetrain.getPose().getRotation());
+
+    return SwerveControllerCommand(testTrajectories.straightToPose(Constants.StartPoseConstants.BLUE_MID_TOP, endPose), drivetrain, true);
+  }
+
   public static Command curveRightCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain) {
     return SwerveControllerCommand(testTrajectories.simpleCurve(1.0, -1.0).transformBy(new Transform2d(new Pose2d(), drivetrain.getPose())), drivetrain, true);
   }

@@ -81,6 +81,17 @@ public class TestTrajectories {
 
   }
 
+  public Trajectory straightToPose(Pose2d startPose2d, Pose2d endPose2d) {
+
+    // setReversed(true) if we are traveling backwards
+
+    return TrajectoryGenerator.generateTrajectory(
+        startPose2d,
+        List.of(), endPose2d,
+        getTrajectoryConfig().setReversed(endPose2d.getX()<startPose2d.getX()));
+
+  }
+
   /**
    * Sideways trajectory
    * 
