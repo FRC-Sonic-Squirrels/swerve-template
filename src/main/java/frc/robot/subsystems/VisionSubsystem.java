@@ -33,14 +33,14 @@ public class VisionSubsystem extends SubsystemBase{
   
   @Override
   public void periodic() {
-    m_result = m_camera.getLatestResult();
+    // m_result = m_camera.getLatestResult();
 
-    if(m_result.hasTargets()){
-      SmartDashboard.putNumber("yaw", m_result.getBestTarget().getYaw());
-    } else {
-      SmartDashboard.putNumber("yaw", -200);
-    }
-    SmartDashboard.putBoolean("has targets", m_result.hasTargets());
+    // if(m_result.hasTargets()){
+    //   SmartDashboard.putNumber("yaw", m_result.getBestTarget().getYaw());
+    // } else {
+    //   SmartDashboard.putNumber("yaw", -200);
+    // }
+    // SmartDashboard.putBoolean("has targets", m_result.hasTargets());
     
     
   }

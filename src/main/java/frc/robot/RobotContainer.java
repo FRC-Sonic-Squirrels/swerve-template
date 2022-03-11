@@ -73,12 +73,20 @@ public class RobotContainer {
     //         () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     // ));
 
-    drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(
-      drivetrainSubsystem, 
-      () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> m_controller.getPOV(), 
-      0.0));
+    // drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(
+    //   drivetrainSubsystem, 
+    //   () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
+    //   () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //   () -> m_controller.getPOV(), 
+    //   0.0));
+
+      drivetrainSubsystem.setDefaultCommand(new DriveFieldCentricCommand(
+        drivetrainSubsystem,
+        () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 
+        () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+      
+
 
     // Configure the button bindings
     configureButtonBindings();
@@ -130,7 +138,7 @@ public class RobotContainer {
 
     new Button(m_controller::getStartButton)
       .whenPressed(
-        new InstantCommand(() -> drivetrainSubsystem.setPose(Constants.StartPoseConstants.BLUE_MID_TOP, Constants.StartPoseConstants.BLUE_MID_TOP.getRotation()), drivetrainSubsystem));
+        new InstantCommand(() -> drivetrainSubsystem.setPose(Constants.StartPoseConstants.BLUE_MID_TOP, drivetrainSubsystem.getGyroscopeRotation()), drivetrainSubsystem));
   }
 
   private static double deadband(double value, double deadband) {

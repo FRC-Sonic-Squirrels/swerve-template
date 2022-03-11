@@ -92,7 +92,9 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   public static Command straightForward2mCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain) {
-    return SwerveControllerCommand(testTrajectories.straightForward(2.0), drivetrain, true);
+    drivetrain.setPose(Constants.StartPoseConstants.BLUE_MID_TOP, drivetrain.getGyroscopeRotation());
+    
+    return SwerveControllerCommand(testTrajectories.straightForward(2.0).transformBy(new Transform2d(new Pose2d(), drivetrain.getPose())), drivetrain, true);
   }
 
   public static Command straightBack1mCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain) {
@@ -108,11 +110,13 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   public static Command curveLeftCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain) {
-    return SwerveControllerCommand(testTrajectories.simpleCurve(1.0, 1.0), drivetrain, true);
+    drivetrain.setPose(Constants.StartPoseConstants.BLUE_MID_TOP, drivetrain.getGyroscopeRotation());
+
+    return SwerveControllerCommand(testTrajectories.simpleCurve(1.0, 1.0).transformBy(new Transform2d(new Pose2d(), drivetrain.getPose())), drivetrain, true);
   }
 
   public static Command curveRightCommand(TestTrajectories testTrajectories, DrivetrainSubsystem drivetrain) {
-    return SwerveControllerCommand(testTrajectories.simpleCurve(1.0, -1.0), drivetrain, true);
+    return SwerveControllerCommand(testTrajectories.simpleCurve(1.0, -1.0).transformBy(new Transform2d(new Pose2d(), drivetrain.getPose())), drivetrain, true);
   }
 
   public static Command doNothingCommand(DrivetrainSubsystem drivetrain) {

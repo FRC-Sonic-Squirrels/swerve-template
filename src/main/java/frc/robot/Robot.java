@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
+    m_robotContainer.drivetrainSubsystem.setPose(StartPoseConstants.BLUE_MID_TOP, m_robotContainer.drivetrainSubsystem.getGyroscopeRotation());
     //m_robotContainer.drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
   }
 
@@ -83,10 +84,10 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    // SmartDashboard.putNumber("Yaw Before Zero", m_robotContainer.drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("Yaw Before Zero", m_robotContainer.drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     // m_robotContainer.drivetrainSubsystem.zeroGyroscope();
-    // SmartDashboard.putNumber("Yaw After Zero", m_robotContainer.drivetrainSubsystem.getGyroscopeRotation().getDegrees());
-    m_robotContainer.drivetrainSubsystem.setPose(StartPoseConstants.BLUE_MID_TOP, m_robotContainer.drivetrainSubsystem.getGyroscopeRotation());
+    SmartDashboard.putNumber("Yaw After Zero", m_robotContainer.drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+    //m_robotContainer.drivetrainSubsystem.setPose(StartPoseConstants.BLUE_MID_TOP, m_robotContainer.drivetrainSubsystem.getGyroscopeRotation());
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

@@ -1,6 +1,12 @@
 {
   "NetworkTables": {
     "SmartDashboard": {
+      "Auto mode": {
+        "open": true
+      },
+      "Field": {
+        "open": true
+      },
       "open": true
     },
     "photonvision": {
@@ -68,10 +74,30 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/Auto mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "image": "C:\\Users\\kyatt\\OneDrive\\Desktop\\rapid react field.png",
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Settings": {
     "mode": "Client",
     "serverTeam": "2930"
+  },
+  "Plots": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "height": 993
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    }
   }
 }
