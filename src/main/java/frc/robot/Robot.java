@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
 
     m_autonomousCommand.beforeStarting(() -> m_robotContainer.drivetrainSubsystem.setPose(
         new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-        m_robotContainer.drivetrainSubsystem.getGyroscopeRotation()));
+        m_robotContainer.drivetrainSubsystem.getIMURotation()));
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

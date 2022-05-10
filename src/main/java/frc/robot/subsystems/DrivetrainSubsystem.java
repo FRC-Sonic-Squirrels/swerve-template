@@ -104,8 +104,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_backRightModule;
 
   private SwerveModuleState[] m_desiredStates;
+  private int loopsSinceLastUpdate = 0;
 
-  private SimpleMotorFeedforward m_feedForward = new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
+  private SimpleMotorFeedforward m_feedForward =
+    new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
+
+  private boolean isOdometrySet = false;
 
   /**
    * Object constructor
@@ -166,19 +170,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_MOTOR, BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation());
 
     // TODO: set starting point on the field accurately
-    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getGyroscopeRotation());
+    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
-    tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
+    tab.addNumber("Gyroscope Angle", () -> getIMURotation().getDegrees());
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY());
 
     SmartDashboard.putData("Field", m_field);
   }
+
 
   /**
    * Sets the gyroscope angle to zero. This can be used to set the direction the robot is currently
@@ -189,12 +194,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     m_odometry.resetPosition(
         new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
-        getGyroscopeRotation());
+        Rotation2d.fromDegrees(0.0));
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
-    m_pigeon.setFusedHeading(deg);
+    m_pigeon.setYaw(deg);
     m_pigeon.setAccumZAngle(deg);
+  }
+
+  public void resetFieldCentric() {
+    Pose2d currentPose = getPose();
+
+    m_odometry.resetPosition(new Pose2d(currentPose.getX(), currentPose.getY(), new Rotation2d(0)),
+        getIMURotation());
   }
 
   public void setGyroscopeHeadingRadians(double rad) {
@@ -208,23 +220,76 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * @param rotation
    */
   public void setPose(Pose2d pose, Rotation2d rotation) {
+
+    isOdometrySet = true;
+
     m_odometry.resetPosition(pose, rotation);
   }
 
+  public boolean isOdometrySet() {
+    return isOdometrySet;
+  }
+
   /**
-   * get current angle from gyroscope, return Rotation2d object.
+   * get current angle from gyroscope, return Rotation2d object. 
+   * ONLY USE THIS IF YOU KNOW WHAT YOU ARE DOING 
+   * FOR MOST CASES USE getRotation() instead
    * 
    * @return gyro angle in Rotation2d
    */
-  public Rotation2d getGyroscopeRotation() {
-      return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+  public Rotation2d getIMURotation() {
+    // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+    return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
 
+  public Rotation2d getRotation() {
+    return m_odometry.getPoseMeters().getRotation();
+  }
 
-  public Rotation2d getGyroscopeRotationVelocity() {
+  /**
+   * get current change in yaw in degrees per second
+   * @return Rotation2d
+   */
+  public Rotation2d getIMURotationVelocity() {
     double[] xyz_dps = new double[3];
     m_pigeon.getRawGyro(xyz_dps);
     return Rotation2d.fromDegrees(xyz_dps[2]);
+  }
+
+  /**
+   * get the change in pitch in degrees per second
+   */
+  public double getGyroscopePitchVelocity() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getRawGyro(xyz_dps);
+    return xyz_dps[1];
+  }
+
+  /**
+   * robot pitch in degrees
+   */
+  public double getGyroscopePitch() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getYawPitchRoll(xyz_dps);
+    return xyz_dps[1];
+  }
+
+  /**
+   * get the change in roll in degrees per second
+   */
+  public double getGyroscopeRollVelocity() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getRawGyro(xyz_dps);
+    return xyz_dps[0];
+  }
+
+  /**
+   * robot roll in degrees
+   */
+  public double getGyroscopeRoll() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getYawPitchRoll(xyz_dps);
+    return xyz_dps[0];
   }
 
   /**
@@ -237,30 +302,36 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   /**
+   * Return the swerve drivetrain's chassis speeds: x, y, and rotational velocity
+   * @return ChassisSpeeds
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    SwerveModuleState m_actualStates[] = getSwerveModuleState();
+    
+    return m_kinematics.toChassisSpeeds(m_actualStates);
+  }
+
+  /**
    * Sets the swerve ModuleStates.
    *
    * @param desiredStates The desired SwerveModule states.
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     if (desiredStates != null) {
-      SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND); 
+      SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
 
-      m_frontLeftModule.set(velocityToDriveVolts(
-          desiredStates[0].speedMetersPerSecond),
+      m_frontLeftModule.set(velocityToDriveVolts(desiredStates[0].speedMetersPerSecond),
           desiredStates[0].angle.getRadians());
-      m_frontRightModule.set(velocityToDriveVolts(
-          desiredStates[1].speedMetersPerSecond),
+      m_frontRightModule.set(velocityToDriveVolts(desiredStates[1].speedMetersPerSecond),
           desiredStates[1].angle.getRadians());
-      m_backLeftModule.set(velocityToDriveVolts(
-          desiredStates[2].speedMetersPerSecond),
+      m_backLeftModule.set(velocityToDriveVolts(desiredStates[2].speedMetersPerSecond),
           desiredStates[2].angle.getRadians());
-      m_backRightModule.set(velocityToDriveVolts(
-          desiredStates[3].speedMetersPerSecond),
+      m_backRightModule.set(velocityToDriveVolts(desiredStates[3].speedMetersPerSecond),
           desiredStates[3].angle.getRadians());
-    }
-    else {
+    } else {
       DriverStation.reportError("Null swerve state in setModulesStates()", false);
     }
+    loopsSinceLastUpdate = 0;
   }
 
   /**
@@ -272,9 +343,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private double velocityToDriveVolts(double speedMetersPerSecond) {
     double ff = m_feedForward.calculate(speedMetersPerSecond);
     return MathUtil.clamp(ff, -MAX_VOLTAGE, MAX_VOLTAGE);
-
-    // below is a naive guess for output volts, linear map of desired velocity to volts
-    // return speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
   }
 
   /**
@@ -283,7 +351,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getGyroscopeRotation());
+    m_odometry.resetPosition(pose, getIMURotation());
+    isOdometrySet = true;
   }
 
   /**
@@ -293,6 +362,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_desiredStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
+    setModuleStates(m_desiredStates);
   }
 
   /**
@@ -304,9 +374,28 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return m_kinematics;
   }
 
+  public SwerveModuleState[] getSwerveModuleState() {
+    SwerveModuleState[] m_actualStates = new SwerveModuleState[4];
+    SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
+        new Rotation2d(m_frontLeftModule.getSteerAngle()));
+    SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
+        new Rotation2d(m_frontRightModule.getSteerAngle()));
+    SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
+        new Rotation2d(m_backLeftModule.getSteerAngle()));
+    SwerveModuleState backRight = new SwerveModuleState(m_backRightModule.getDriveVelocity(),
+        new Rotation2d(m_backRightModule.getSteerAngle()));
+    // new array with size 4, fill array with new module sates in the order : fl, fr, bl, br
+    m_actualStates[0] = frontLeft;
+    m_actualStates[1] = frontRight;
+    m_actualStates[2] = backLeft;
+    m_actualStates[3] = backRight;
+    return m_actualStates;
+  }
+
   @Override
   public void periodic() {
-    m_odometry.update(getGyroscopeRotation(),
+
+    m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
             new Rotation2d(m_frontLeftModule.getSteerAngle())),
         new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
@@ -316,11 +405,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
         new SwerveModuleState(m_backRightModule.getDriveVelocity(),
             new Rotation2d(m_backRightModule.getSteerAngle())));
 
-    // TODO: how can we be sure m_desiredStates form Autonomous gets set before running this periodic()
-    // and if not, will that mean we get occasional 20ms delays and/or duplicate states?
-    setModuleStates(m_desiredStates);
-
     // Update pose in field simulation
     m_field.setRobotPose(m_odometry.getPoseMeters());
+
+    // Check for missed updates
+    if (loopsSinceLastUpdate > 5) {
+      // If we've not updated Swerve Module States in 5 loops, we must be disabled or something
+      // has gone wrong and there's no default drive command. Tell modules to stay still.
+      // This is SUPER IMPORTANT, as this allows the swerve-lib code time to let the CANcoders
+      // settle and get an accurate reading.
+      int loopCount = loopsSinceLastUpdate;
+      m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
+      setModuleStates(m_desiredStates);
+      loopsSinceLastUpdate = loopCount;
+    }
+
+    loopsSinceLastUpdate++;
+
   }
+
 }
