@@ -57,6 +57,11 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
 
+    public static final class DriveConstants{
+        public static final double TRANSLATION_MULTIPLIER = 0.4;
+        public static final double ROTATION_MULTIPLIER = 0.4;
+    }
+
     public static final class AutoConstants {
         // This kP worked for the DriveWithSetRotation command
         public static final double kPThetaController = 3.0;
