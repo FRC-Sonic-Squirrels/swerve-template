@@ -4,14 +4,21 @@
 
 package frc.robot;
 
+import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 /**
@@ -22,25 +29,42 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 
-  private final XboxController m_controller = new XboxController(0);
+  private final XboxController controller = new XboxController(0);
+
+  public final SendableChooser<Command> chooser = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    // set the starting position of the robot on the field
+    // TODO: need a chooser object to select starting position and angle
+    drivetrainSubsystem.setGyroscopeHeadingDegrees(0);
+    drivetrainSubsystem.setPose(Constants.ROBOT_1M_LEFT_OF_HUB,
+        drivetrainSubsystem.getIMURotation());
+
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true);
+    SmartDashboard.putData("Auto mode", chooser);
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getY(GenericHID.Hand.kLeft)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getX(GenericHID.Hand.kLeft)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getX(GenericHID.Hand.kRight)) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            drivetrainSubsystem,
+            () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
+
+    // drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(drivetrainSubsystem,
+    //     () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //     () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //     () -> controller.getPOV(), 0));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -54,19 +78,17 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(m_controller::getBackButton)
+    new Button(controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-  }
+            .whenPressed(drivetrainSubsystem::zeroGyroscope);
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new InstantCommand();
+    // new Button(controller::getAButton)
+    //         .whenPressed(new DriveWithSetRotationCommand(
+    //           drivetrainSubsystem,
+    //           () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //           () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //           () -> controller.getPOV(),
+    //           0));
   }
 
   private static double deadband(double value, double deadband) {
@@ -83,7 +105,7 @@ public class RobotContainer {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.05);
+    value = deadband(value, 0.1);
 
     // Square the axis
     value = Math.copySign(value * value, value);
